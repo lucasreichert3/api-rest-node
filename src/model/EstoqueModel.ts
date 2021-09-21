@@ -1,7 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import db from '../database/database.config';
 
-interface Estoque {
+export interface Estoque {
   id: string;
   nome: string;
   descricao?: string;
