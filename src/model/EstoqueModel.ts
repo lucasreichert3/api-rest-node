@@ -26,7 +26,7 @@ EstoqueModel.init(
     },
   },
   {
-      sequelize: db,
-      tableName: 'estoque'
+    sequelize: db,
+    tableName: 'estoque',
   }
 );

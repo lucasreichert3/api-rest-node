@@ -1,6 +1,7 @@
 import express from 'express';
 import db from './database/database.config';
 import estoqueRouter from './router/EstoqueRouter';
+import produtoRouter from './router/ProdutoRouter';
 
 
 db.sync().then(() => {
@@ -13,6 +14,7 @@ app.use(express.json());
 const port = 9000;
 
 app.use('/estoque', estoqueRouter)
+app.use('/produto', produtoRouter)
 
 app.listen(port, () => {
   console.log('server is running');

@@ -4,8 +4,8 @@ import db from '../database/database.config';
 interface Produto {
   id: string;
   nome: string;
-  quantidade?: Int32Array;
-  valor?: Float32Array;
+  quantidade: Int32Array;
+  valor: Float32Array;
 }
 
 export class ProdutoModel extends Model<Produto> {}

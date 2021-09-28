@@ -1,44 +1,23 @@
-import { body, param, query } from 'express-validator';
+import { body } from 'express-validator';
 
 class ProdutoValidator {
-	checkCreateProduto() {
-		return [
-			body('id')
-				.optional()
-				.isUUID(4)
-				.withMessage('The value should be UUID v4'),
-			body('title')
-				.notEmpty()
-				.withMessage('The title value should not be empty'),
-			body('completed')
-				.optional()
-				.isBoolean()
-				.withMessage('The value should be boolean')
-				.isIn([0, false])
-				.withMessage('The value should be 0 or false'),
-		];
-	}
-	checkReadProduto() {
-		return [
-			query('limit')
-				.optional()
-				.isInt({ min: 1, max: 10 })
-				.withMessage('The limit value should be number and between 1-10'),
-			query('offset')
-				.optional()
-				.isNumeric()
-				.withMessage('The value should be number'),
-		];
-	}
-	checkIdParam() {
-		return [
-			param('id')
-				.notEmpty()
-				.withMessage('The value should be not empty')
-				.isUUID(4)
-				.withMessage('The value should be uuid v4'),
-		];
-	}
+  checkCreateProduto() {
+    return [
+      body('nome')
+        .notEmpty()
+        .withMessage('O nome do produto deve ser fornecido!'),
+      body('quantidade')
+        .notEmpty()
+        .withMessage('A quantidade do produto deve ser fornecida!')
+        .isNumeric()
+        .withMessage('A quantidade deve ser um número'),
+      body('valor')
+        .notEmpty()
+        .withMessage('O valor do produto deve ser fornecido!')
+        .isNumeric()
+        .withMessage('O valor deve ser um número'),
+    ];
+  }
 }
 
 export default new ProdutoValidator();
