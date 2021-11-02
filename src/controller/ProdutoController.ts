@@ -1,13 +1,26 @@
 import { Request, Response } from 'express';
+import { FieldMap } from 'sequelize/types';
 
 import { v4 as uuidv4 } from 'uuid';
-import { ProdutoModel } from '../model/ProdutoModel';
+import { EstoqueModel } from '../model/EstoqueModel';
+import { EstoqueProdutoModel } from '../model/EstoqueProduto';
+import { ProdutoModel, ProdutoParams } from '../model/ProdutoModel';
 
 class ProdutoController {
   async criar(req: Request, res: Response) {
     const id = uuidv4();
     try {
+      const { estoqueId } = req.body;
+      const estoque = await EstoqueModel.findOne({ where: { id: estoqueId } });
+      if (!estoque)
+        return res
+          .status(404)
+          .send({ msg: `Estoque com id ${estoqueId} não encontrado` });
+
       const record = await ProdutoModel.create({ ...req.body, id });
+
+      await (<any>record).addEstoqueModel(estoque);
+
       return res.json({ record, msg: 'Produto criado com sucesso!' });
     } catch (e) {
       return res.status(500).json({
@@ -30,7 +43,6 @@ class ProdutoController {
       });
       return res.json(records);
     } catch (e) {
-      console.log(e);
       return res.status(500).json({
         msg: 'Falha ao buscar produtos...',
         status: 500,
@@ -102,6 +114,58 @@ class ProdutoController {
         msg: 'Falha ao buscar produto...',
         status: 500,
         route: '/produto/delete/:id',
+      });
+    }
+  }
+
+  async adicionarEstoque(req: Request, res: Response) {
+    try {
+      const { estoqueId, produtoId } = req.body;
+      const produto = await ProdutoModel.findOne({ where: { id: produtoId } });
+      const estoque = await EstoqueModel.findOne({ where: { id: estoqueId } });
+
+      if (!produto || !estoque) {
+        const error = !produto ? 'produto' : 'estoque';
+        return res
+          .status(404)
+          .json({ msg: `Não foi possível encontrar o ${error}...` });
+      }
+
+      await (<any>produto).addEstoqueModel(estoque);
+
+      return res.json({ produto, estoque });
+    } catch (error) {
+      return res.status(500).json({
+        msg: 'Falha adicionar estoque ao produto...',
+        status: 500,
+        route: '/produto/addEstoque',
+      });
+    }
+  }
+
+  async deletarEstoque(req: Request, res: Response) {
+    try {
+      const { estoqueId, produtoId } = req.body;
+
+      const result = await new EstoqueProdutoModel().getOne(
+        estoqueId,
+        produtoId
+      );
+
+      if (result.length === 0) return res.status(404).json({ message: 'Este produto não pertence ao estoque!' })
+
+      EstoqueProdutoModel.destroy({
+        where: { EstoqueModelId: estoqueId, ProdutoModelId: produtoId } as any,
+      });
+
+      return res.json({ message: 'Produto retirado do estoque!' });
+      
+    } catch (error) {
+      console.log('DEU ERRO', error);
+      return res.status(500).json({
+        msg: 'Falha adicionar estoque ao produto...',
+        status: 500,
+        route: '/produto/addEstoque',
       });
     }
   }

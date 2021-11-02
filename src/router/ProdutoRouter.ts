@@ -7,28 +7,28 @@ import ProdutoController from '../controller/ProdutoController';
 const router = express.Router();
 
 router.post(
-  '/create',
+  '/',
   ProdutoValidator.checkCreateProduto(),
   Middleware.handleValidationError,
   ProdutoController.criar
 );
 
 router.get(
-  '/read',
+  '/',
   DefaultValidator.checkLimitAndOrder(),
   Middleware.handleValidationError,
   ProdutoController.buscar
 );
 
 router.get(
-  '/read/:id',
+  '/:id',
   DefaultValidator.checkIdParam(),
   Middleware.handleValidationError,
   ProdutoController.buscarPeloID
 );
 
 router.put(
-  '/update/:id',
+  '/:id',
   DefaultValidator.checkIdParam(),
   ProdutoValidator.checkCreateProduto(),
   Middleware.handleValidationError,
@@ -36,10 +36,24 @@ router.put(
 );
 
 router.delete(
-  '/delete/:id',
+  '/:id',
   DefaultValidator.checkIdParam(),
   Middleware.handleValidationError,
   ProdutoController.excluir
 );
+
+router.post(
+  '/addEstoque',
+  ProdutoValidator.checkEstoqueProduto(),
+  Middleware.handleValidationError,
+  ProdutoController.adicionarEstoque
+)
+
+router.post(
+  '/deleteEstoque',
+  ProdutoValidator.checkEstoqueProduto(),
+  Middleware.handleValidationError,
+  ProdutoController.deletarEstoque
+)
 
 export default router;

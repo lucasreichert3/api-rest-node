@@ -1,11 +1,13 @@
 import express from 'express';
 import db from './database/database.config';
+import { EstoqueProdutoModel } from './model/EstoqueProduto';
 import estoqueRouter from './router/EstoqueRouter';
 import produtoRouter from './router/ProdutoRouter';
 
 
-db.sync().then(() => {
+db.sync().then(async () => {
   console.log('connected to db')
+  await EstoqueProdutoModel.sync()
 })
 
 const app = express();

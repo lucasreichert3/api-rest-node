@@ -7,28 +7,28 @@ import Middleware from '../../middleware/middleware';
 const router = express.Router();
 
 router.post(
-  '/create',
+  '/',
   EstoqueValidator.checkCreateProduto(),
   Middleware.handleValidationError,
   EstoqueController.create
 );
 
 router.get(
-  '/read',
+  '/',
   DefaultValidator.checkLimitAndOrder(),
   Middleware.handleValidationError,
   EstoqueController.getAll
 );
 
 router.get(
-  '/read/:id',
+  '/:id',
   DefaultValidator.checkIdParam(),
   Middleware.handleValidationError,
   EstoqueController.getOne
 );
 
 router.put(
-  '/update/:id',
+  '/:id',
   EstoqueValidator.checkCreateProduto(),
   DefaultValidator.checkIdParam(),
   Middleware.handleValidationError,
@@ -36,7 +36,7 @@ router.put(
 );
 
 router.delete(
-  '/delete/:id',
+  '/:id',
   DefaultValidator.checkIdParam(),
   Middleware.handleValidationError,
   EstoqueController.delete

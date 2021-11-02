@@ -1,11 +1,16 @@
 import { DataTypes, Model } from 'sequelize';
 import db from '../database/database.config';
+import { EstoqueModel } from './EstoqueModel';
 
 interface Produto {
   id: string;
   nome: string;
   quantidade: Int32Array;
   valor: Float32Array;
+}
+
+export interface ProdutoParams extends Produto {
+  EstoqueModels: EstoqueModel[]
 }
 
 export class ProdutoModel extends Model<Produto> {}
@@ -23,15 +28,15 @@ ProdutoModel.init(
     },
     quantidade: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     valor: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-      }
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
   },
   {
-      sequelize: db,
-      tableName: 'produto'
+    sequelize: db,
+    tableName: 'produto',
   }
 );
