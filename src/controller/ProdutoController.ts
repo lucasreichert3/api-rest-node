@@ -1,10 +1,7 @@
 import { Request, Response } from 'express';
-import { FieldMap } from 'sequelize/types';
-
 import { v4 as uuidv4 } from 'uuid';
 import { EstoqueModel } from '../model/EstoqueModel';
-import { EstoqueProdutoModel } from '../model/EstoqueProduto';
-import { ProdutoModel, ProdutoParams } from '../model/ProdutoModel';
+import { ProdutoModel } from '../model/ProdutoModel';
 
 class ProdutoController {
   async criar(req: Request, res: Response) {
@@ -114,58 +111,6 @@ class ProdutoController {
         msg: 'Falha ao buscar produto...',
         status: 500,
         route: '/produto/delete/:id',
-      });
-    }
-  }
-
-  async adicionarEstoque(req: Request, res: Response) {
-    try {
-      const { estoqueId, produtoId } = req.body;
-      const produto = await ProdutoModel.findOne({ where: { id: produtoId } });
-      const estoque = await EstoqueModel.findOne({ where: { id: estoqueId } });
-
-      if (!produto || !estoque) {
-        const error = !produto ? 'produto' : 'estoque';
-        return res
-          .status(404)
-          .json({ msg: `Não foi possível encontrar o ${error}...` });
-      }
-
-      await (<any>produto).addEstoqueModel(estoque);
-
-      return res.json({ produto, estoque });
-    } catch (error) {
-      return res.status(500).json({
-        msg: 'Falha adicionar estoque ao produto...',
-        status: 500,
-        route: '/produto/addEstoque',
-      });
-    }
-  }
-
-  async deletarEstoque(req: Request, res: Response) {
-    try {
-      const { estoqueId, produtoId } = req.body;
-
-      const result = await new EstoqueProdutoModel().getOne(
-        estoqueId,
-        produtoId
-      );
-
-      if (result.length === 0) return res.status(404).json({ message: 'Este produto não pertence ao estoque!' })
-
-      EstoqueProdutoModel.destroy({
-        where: { EstoqueModelId: estoqueId, ProdutoModelId: produtoId } as any,
-      });
-
-      return res.json({ message: 'Produto retirado do estoque!' });
-      
-    } catch (error) {
-      console.log('DEU ERRO', error);
-      return res.status(500).json({
-        msg: 'Falha adicionar estoque ao produto...',
-        status: 500,
-        route: '/produto/addEstoque',
       });
     }
   }

@@ -42,18 +42,4 @@ router.delete(
   ProdutoController.excluir
 );
 
-router.post(
-  '/addEstoque',
-  ProdutoValidator.checkEstoqueProduto(),
-  Middleware.handleValidationError,
-  ProdutoController.adicionarEstoque
-)
-
-router.post(
-  '/deleteEstoque',
-  ProdutoValidator.checkEstoqueProduto(),
-  Middleware.handleValidationError,
-  ProdutoController.deletarEstoque
-)
-
 export default router;

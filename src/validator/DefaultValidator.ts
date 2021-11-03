@@ -1,4 +1,4 @@
-import { body, param, query } from 'express-validator';
+import { param, query } from 'express-validator';
 
 class DefaultValidator {
   checkLimitAndOrder() {
