@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 import { v4 as uuidv4 } from 'uuid';
-import { EstoqueModel } from '../model/EstoqueModel';
+import { EstoqueModel, EstoqueParams } from '../model/EstoqueModel';
+import { ProdutoModel } from '../model/ProdutoModel';
 
 export class EstoqueController {
   async create(req: Request, res: Response) {
@@ -98,6 +100,51 @@ export class EstoqueController {
       });
     }
   }
+
+  async listarProdutos(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const record = await EstoqueModel.findOne({
+        where: { id },
+        include: [ProdutoModel],
+      });
+
+      if (!record) {
+        return res
+          .status(404)
+          .json({ msg: 'Não foi possível encontrar o estoque...' });
+      }
+
+      const { ProdutoModels: produtos } = record.toJSON() as EstoqueParams;
+
+      return res.json({ data: produtos });
+    } catch (error) {
+      return res.status(500).json({
+        msg: 'Falha ao buscar produtos do estoque',
+        status: 500,
+        route: '/estoque/listarProdutos',
+      });
+    }
+  }
+
+  async filtrarPorNome(req: Request, res: Response) {
+    try {
+      const { nome } = req.body
+
+      const result = await EstoqueModel.findAll({ where: { nome: { [Op.substring]: nome } } })
+
+      return res.json({ data: result })
+
+    } catch (error) {
+      return res.status(500).json({
+        msg: 'Falha ao filtrar pelo nome',
+        status: 500,
+        route: '/produto/filtrarNome',
+      });
+    }
+  }
+
 }
 
 export default new EstoqueController();

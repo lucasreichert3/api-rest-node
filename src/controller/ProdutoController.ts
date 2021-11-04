@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
+import { Op } from 'sequelize';
 import { v4 as uuidv4 } from 'uuid';
 import { EstoqueModel } from '../model/EstoqueModel';
-import { ProdutoModel } from '../model/ProdutoModel';
+import { ProdutoModel, ProdutoParams } from '../model/ProdutoModel';
 
 class ProdutoController {
   async criar(req: Request, res: Response) {
@@ -111,6 +112,52 @@ class ProdutoController {
         msg: 'Falha ao buscar produto...',
         status: 500,
         route: '/produto/delete/:id',
+      });
+    }
+  }
+
+  async listarEstoques(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      const record = await ProdutoModel.findOne({
+        where: { id },
+        include: [EstoqueModel],
+      });
+
+      if (!record) {
+        return res
+          .status(404)
+          .json({ msg: 'Não foi possível encontrar o produto...' });
+      }
+
+      const { EstoqueModels: estoques } = record.toJSON() as ProdutoParams;
+
+      return res.json({ data: estoques });
+    } catch (error) {
+      return res.status(500).json({
+        msg: 'Falha ao buscar estoques do produto',
+        status: 500,
+        route: '/produto/listarEstoques',
+      });
+    }
+  }
+
+  async filtroPorValor(req: Request, res: Response) {
+    try {
+      const { valor } = req.body;
+
+      const result = await ProdutoModel.findAll({
+        where: { valor: { [Op.gte]: [valor] } as any },
+      });
+
+      return res.json({ data: result })
+
+    } catch (error) {
+      return res.status(500).json({
+        msg: 'Falha ao filtrar o valor',
+        status: 500,
+        route: '/produto/filtrarValor',
       });
     }
   }

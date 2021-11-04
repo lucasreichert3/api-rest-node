@@ -31,6 +31,15 @@ class ProdutoValidator {
         .withMessage('O id do estoque deve ser informado!'),
     ];
   }
+  checkFiltroValor() {
+    return [
+      body('valor')
+        .notEmpty()
+        .withMessage('O valor deve ser fornecido!')
+        .isNumeric()
+        .withMessage('O valor deve ser um número'),
+    ];
+  }
 }
 
 export default new ProdutoValidator();

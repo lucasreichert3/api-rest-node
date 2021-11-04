@@ -42,4 +42,18 @@ router.delete(
   EstoqueController.delete
 );
 
+router.get(
+  '/listarProdutos/:id',
+  DefaultValidator.checkIdParam(),
+  Middleware.handleValidationError,
+  EstoqueController.listarProdutos
+);
+
+router.post(
+  '/filtrarPorNome',
+  EstoqueValidator.checkCreateProduto(),
+  Middleware.handleValidationError,
+  EstoqueController.filtrarPorNome
+);
+
 export default router;
