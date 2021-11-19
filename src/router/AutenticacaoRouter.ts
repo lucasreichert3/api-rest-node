@@ -5,6 +5,14 @@ import AutenticacaoController from '../controller/AutenticacaoController';
 
 const router = express.Router();
 
+
+router.post(
+  '/create_login_teste',
+  Middleware.handleValidationError,
+  AutenticacaoController.create_login_teste
+);
+
+
 router.post(
   '/login/:usuario/:senha',
   Middleware.handleValidationError,
