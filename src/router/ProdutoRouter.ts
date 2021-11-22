@@ -3,13 +3,13 @@ import ProdutoValidator from '../validator/ProdutoValidator';
 import DefaultValidator from '../validator/DefaultValidator';
 import Middleware from '../../middleware/middleware';
 import ProdutoController from '../controller/ProdutoController';
-import AutenticacaoController from '../controller/AutenticacaoController';
+import { verifyToken } from '../middlewares/auth';
 
 const router = express.Router();
 
 router.post(
   '/',
-  AutenticacaoController.verifyJWT,
+  verifyToken,
   ProdutoValidator.checkCreateProduto(),
   Middleware.handleValidationError,
   ProdutoController.criar
@@ -31,7 +31,7 @@ router.get(
 
 router.put(
   '/:id',
-  AutenticacaoController.verifyJWT,
+  verifyToken,
   DefaultValidator.checkIdParam(),
   ProdutoValidator.checkCreateProduto(),
   Middleware.handleValidationError,
@@ -40,7 +40,7 @@ router.put(
 
 router.delete(
   '/:id',
-  AutenticacaoController.verifyJWT,
+  verifyToken,
   DefaultValidator.checkIdParam(),
   Middleware.handleValidationError,
   ProdutoController.excluir

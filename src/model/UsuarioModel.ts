@@ -5,7 +5,6 @@ interface Usuario {
   id: string;
   username: string;
   password: string;
-  token: string;
 }
 
 export class UsuarioModel extends Model<Usuario> {}
@@ -24,10 +23,6 @@ UsuarioModel.init(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    token: {
-      type: DataTypes.STRING,
-      allowNull: true,
     },
   },
   {

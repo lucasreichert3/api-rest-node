@@ -2,13 +2,13 @@ import express from 'express'
 import Middleware from '../../middleware/middleware';
 import EstoqueProdutoController from '../controller/EstoqueProdutoController';
 import EstoqueProdutoValidator from '../validator/EstoqueProdutoValidator';
-import AutenticacaoController from '../controller/AutenticacaoController';
+import { verifyToken } from '../middlewares/auth';
 
 const router = express.Router()
 
 router.post(
     '/',
-    AutenticacaoController.verifyJWT,
+    verifyToken,
     EstoqueProdutoValidator.checkEstoqueProduto(),
     Middleware.handleValidationError,
     EstoqueProdutoController.adicionar
@@ -16,7 +16,7 @@ router.post(
   
   router.delete(
     '/',
-    AutenticacaoController.verifyJWT,
+    verifyToken,
     EstoqueProdutoValidator.checkEstoqueProduto(),
     Middleware.handleValidationError,
     EstoqueProdutoController.deletar

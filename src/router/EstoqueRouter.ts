@@ -3,13 +3,13 @@ import EstoqueController from '../controller/EstoqueController';
 import DefaultValidator from '../validator/DefaultValidator';
 import EstoqueValidator from '../validator/EstoqueValidator';
 import Middleware from '../../middleware/middleware';
-import AutenticacaoController from '../controller/AutenticacaoController';
+import { verifyToken } from '../middlewares/auth';
 
 const router = express.Router();
 
 router.post(
   '/',
-  AutenticacaoController.verifyJWT,
+  verifyToken,
   EstoqueValidator.checkCreateProduto(),
   Middleware.handleValidationError,
   EstoqueController.create
@@ -31,7 +31,7 @@ router.get(
 
 router.put(
   '/:id',
-  AutenticacaoController.verifyJWT,
+  verifyToken,
   EstoqueValidator.checkCreateProduto(),
   DefaultValidator.checkIdParam(),
   Middleware.handleValidationError,
@@ -40,7 +40,7 @@ router.put(
 
 router.delete(
   '/:id',
-  AutenticacaoController.verifyJWT,
+  verifyToken,
   DefaultValidator.checkIdParam(),
   Middleware.handleValidationError,
   EstoqueController.delete
@@ -55,7 +55,6 @@ router.get(
 
 router.post(
   '/filtrarPorNome',
-  AutenticacaoController.verifyJWT,
   EstoqueValidator.checkCreateProduto(),
   Middleware.handleValidationError,
   EstoqueController.filtrarPorNome
