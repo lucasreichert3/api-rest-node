@@ -31,7 +31,7 @@ class UsuarioController {
       const usuario = await UsuarioModel.findOne({ where: { id } });
 
       if (!usuario)
-        return res.status(400).send({ message: 'Usuário não encontrado!' });
+        return res.status(404).send({ message: 'Usuário não encontrado!' });
 
       return res.json({
         usuario: { ...usuario.toJSON(), password: undefined },
@@ -53,7 +53,7 @@ class UsuarioController {
 
       if (usuario)
         return res
-          .status(400)
+          .status(409)
           .send({ message: 'Já existe um usuário com este username!' });
 
       const id = uuidv4();
@@ -83,7 +83,7 @@ class UsuarioController {
 
       if (id !== req.userId) {
         return res
-          .status(403)
+          .status(401)
           .send({ message: 'Usuário não tem permissão de alterar!' });
       }
 
@@ -91,13 +91,13 @@ class UsuarioController {
       const usuario = await UsuarioModel.findOne({ where: { id } });
 
       if (!usuario)
-        return res.status(400).send({ message: 'Usuário não encontrado!' });
+        return res.status(404).send({ message: 'Usuário não encontrado!' });
 
       const duplicate = await UsuarioModel.findOne({ where: { username } });
 
       if (duplicate && usuario.get().username !== username)
         return res
-          .status(400)
+          .status(409)
           .send({ message: 'Já existe um usuário com este username!' });
 
       const hashPassword = await hash(password, 10);
@@ -126,14 +126,14 @@ class UsuarioController {
 
       if (id !== req.userId) {
         return res
-          .status(403)
+          .status(401)
           .send({ message: 'Usuário não tem permissão de alterar!' });
       }
 
       const usuario = await UsuarioModel.findOne({ where: { id } });
 
       if (!usuario)
-        return res.status(400).send({ message: 'Usuário não encontrado!' });
+        return res.status(404).send({ message: 'Usuário não encontrado!' });
 
       await usuario.destroy();
 

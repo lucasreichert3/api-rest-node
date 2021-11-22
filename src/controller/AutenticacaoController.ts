@@ -32,7 +32,7 @@ class AutenticacaoController {
       return res.json({ usuario: { ...usuario, password: undefined }, token });
     } catch (error) {
       return res.status(500).json({
-        msg: 'Falha ao logal!',
+        msg: 'Falha ao logar!',
         status: 500,
         route: '/login',
       });
