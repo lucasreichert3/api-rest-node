@@ -1,0 +1,1187 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Estoque e Produtos",
+    "description": "Tem como objetivo manipular produtos e estoque",
+    "version": "1.0.0"
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Produto",
+      "description": "Manipulação dos produtos"
+    },
+    {
+      "name": "Estoque",
+      "description": "Manipulação dos estoques"
+    },
+    {
+      "name": "Estoque e Produtos",
+      "description": "Criar ligação entre estoque e produto"
+    },
+    {
+      "name": "Usuário",
+      "description": "Manipulação dos usuários"
+    },
+    {
+      "name": "Autenticação",
+      "description": "Autenticação de usuários"
+    }
+  ],
+  "schemes": ["https", "http"],
+  "paths": {
+    "/produto": {
+      "post": {
+        "tags": ["Produto"],
+        "summary": "Criar novo produto",
+        "description": "",
+        "operationId": "createProduct",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": {
+          "bearerAuth": [""]
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Produto"
+              },
+              "examples": {
+                "produto": {
+                  "value": {
+                    "nome": "Mouse",
+                    "estoqueId": "1234-1234-1234-1234",
+                    "quantidade": 3,
+                    "valor": 32.0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "404": {
+            "description": "Estoque fornecido ao produto não encontrado"
+          },
+          "401": {
+            "description": "Usuário deve está logado"
+          },
+          "200": {
+            "description": "Produto criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/definitions/ProdutoResposta"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Produto"],
+        "summary": "Listar produtos",
+        "description": "",
+        "operationId": "getProducts",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/ProdutoRespostaItem"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/produto/{id}": {
+      "get": {
+        "tags": ["Produto"],
+        "summary": "Buscar produto por ID",
+        "description": "",
+        "operationId": "getProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do produto",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/definitions/ProdutoRespostaItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Produto com id {id} não encontrado"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Produto"],
+        "summary": "Atualizar produto",
+        "description": "",
+        "operationId": "updateProduct",
+        "security": {
+          "bearerAuth": [""]
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Produto"
+              },
+              "examples": {
+                "produto": {
+                  "value": {
+                    "nome": "Mouse",
+                    "estoqueId": "1234-1234-1234-1234",
+                    "quantidade": 3,
+                    "valor": 32.0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do produto",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "record": {
+                      "$ref": "#/definitions/ProdutoRespostaItem"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Produto com id {id} não encontrado"
+          },
+          "401": {
+            "description": "Usuário deve está logado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Produto"],
+        "summary": "Excluir produto por ID",
+        "description": "",
+        "operationId": "deleteProduct",
+        "security": {
+          "bearerAuth": [""]
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do produto",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "record": {
+                      "$ref": "#/definitions/ProdutoRespostaItem"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Produto com id {id} não encontrado"
+          },
+          "401": {
+            "description": "Usuário deve está logado"
+          }
+        }
+      }
+    },
+    "/produto/listarEstoques/{id}": {
+      "get": {
+        "tags": ["Produto"],
+        "summary": "Buscar estoques ligados a um produto",
+        "description": "",
+        "operationId": "getEstoque",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do produto",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/definitions/EstoqueProdutoItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não foi possível encontrar o produto"
+          }
+        }
+      }
+    },
+    "/produto/filtrarPorValor": {
+      "post": {
+        "tags": ["Produto"],
+        "summary": "Filtrar produtos pelo valor maior ou igual",
+        "description": "",
+        "operationId": "filtroValor",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/FiltroValor"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/ProdutoRespostaItem"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não foi possível encontrar o produto"
+          }
+        }
+      }
+    },
+    "/estoque": {
+      "post": {
+        "tags": ["Estoque"],
+        "summary": "Criar novo estoque",
+        "description": "",
+        "operationId": "createEstoque",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "security": {
+          "bearerAuth": [""]
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/EstoquePost"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Estoque criado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "record": {
+                      "type": "object",
+                      "$ref": "#/definitions/EstoqueResposta"
+                    },
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Estoque"],
+        "summary": "Listar estoques",
+        "description": "",
+        "operationId": "getEstoque",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/EstoqueResposta"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estoque/{id}": {
+      "get": {
+        "tags": ["Estoque"],
+        "summary": "Listar estoque por id",
+        "description": "",
+        "operationId": "getEstoqueId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estoque",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/definitions/EstoqueResposta"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não foi possível encontrar o estoque"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Estoque"],
+        "summary": "Atualizar estoque por id",
+        "description": "",
+        "operationId": "updateEstoque",
+        "security": {
+          "bearerAuth": [""]
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/EstoquePost"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estoque",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "$ref": "#/definitions/EstoqueResposta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não foi possível encontrar o estoque"
+          },
+          "401": {
+            "description": "Não autorizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Estoque"],
+        "summary": "excluir estoque por id",
+        "description": "",
+        "operationId": "deleteEstoque",
+        "security": {
+          "bearerAuth": [""]
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estoque",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "object",
+                      "$ref": "#/definitions/EstoqueResposta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não foi possível encontrar o estoque"
+          },
+          "401": {
+            "description": "Não autorizado"
+          }
+        }
+      }
+    },
+    "/estoque/listarProdutos/{id}": {
+      "get": {
+        "tags": ["Estoque"],
+        "summary": "Listar produtos de um estoque",
+        "description": "",
+        "operationId": "getProdutosByEstoqueId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do estoque",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/ProdutoEstoqueItem"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Não foi possível encontrar o estoque"
+          }
+        }
+      }
+    },
+    "/estoque/filtrarPorNome": {
+      "post": {
+        "tags": ["Estoque"],
+        "summary": "Filtrar estoque pelo nome",
+        "description": "",
+        "operationId": "listEstoqueByName",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["nome"],
+                "properties": {
+                  "nome": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/EstoqueResposta"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/estoqueProduto": {
+      "post": {
+        "tags": ["Estoque e Produtos"],
+        "summary": "Criar ligação entre estoque e produto",
+        "description": "",
+        "operationId": "createConnection",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/EstoqueProdutoCriarLigacao"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ligação criada com sucesso!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "produto": {
+                      "type": "object",
+                      "$ref": "#/definitions/EstoqueResposta"
+                    },
+                    "estoque": {
+                      "type": "object",
+                      "$ref": "#/definitions/ProdutoRespostaItem"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Não autorizado"
+          },
+          "404": {
+            "description": "Estoque e/ou produto não encontrado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Estoque e Produtos"],
+        "summary": "Excluir ligação entre estoque e produto",
+        "description": "",
+        "operationId": "createConnection",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/EstoqueProdutoCriarLigacao"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ligação entre estoque e produto excluída!"
+          },
+          "401": {
+            "description": "Não autorizado"
+          },
+          "404": {
+            "description": "Estoque e/ou produto não encontrado"
+          }
+        }
+      }
+    },
+    "/usuario": {
+      "post": {
+        "tags": ["Usuário"],
+        "summary": "Criar usuário",
+        "description": "",
+        "operationId": "createUser",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/UsuarioModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuário criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "$ref": "#/definitions/UsuarioResposta"
+                    },
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Já existe um usuário com este username!"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Usuário"],
+        "summary": "Listar usuários",
+        "description": "",
+        "operationId": "getUsuarios",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "usuarios": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/definitions/UsuarioResposta"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usuario/{id}": {
+      "put": {
+        "tags": ["Usuário"],
+        "summary": "Atualizar usuário",
+        "description": "",
+        "operationId": "updateUser",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do usuário",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/UsuarioModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuário alterado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "user": {
+                      "type": "object",
+                      "$ref": "#/definitions/UsuarioResposta"
+                    },
+                    "msg": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Já existe um usuário com este username!"
+          },
+          "401": {
+            "description": "Usuário não tem permissão!"
+          },
+          "404": {
+            "description": "Usuário não encontrado!"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Usuário"],
+        "summary": "Atualizar usuário",
+        "description": "",
+        "operationId": "listUserById",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do Usuário",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "usuario": {
+                      "type": "object",
+                      "$ref": "#/definitions/UsuarioResposta"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado!"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Usuário"],
+        "summary": "Excluir usuário",
+        "description": "",
+        "operationId": "deleteUser",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID do Usuário",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário excluído"
+          },
+          "404": {
+            "description": "Usuário não encontrado!"
+          },
+          "401": {
+            "description": "Usuário não tem permissão!"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["Autenticação"],
+        "summary": "Logar",
+        "description": "",
+        "operationId": "login",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/UsuarioModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuário criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "usuario": {
+                      "type": "object",
+                      "$ref": "#/definitions/UsuarioResposta"
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Usuário ou senha incorreto!"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "FiltroValor": {
+      "type": "object",
+      "properties": {
+        "valor": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "Produto": {
+      "type": "object",
+      "required": ["nome", "estoqueId", "quantidade", "valor"],
+      "properties": {
+        "nome": {
+          "type": "string"
+        },
+        "estoqueId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "quantidade": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "valor": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "ProdutoResposta": {
+      "type": "object",
+      "properties": {
+        "record": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "nome": {
+              "type": "string"
+            },
+            "estoqueId": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "quantidade": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "valor": {
+              "type": "number",
+              "format": "float"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "msg": {
+          "type": "string"
+        }
+      }
+    },
+    "ProdutoRespostaItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nome": {
+          "type": "string"
+        },
+        "estoqueId": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "quantidade": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "valor": {
+          "type": "number",
+          "format": "float"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "EstoqueProdutoItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nome": {
+          "type": "string"
+        },
+        "descricao": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "estoque_produto": {
+          "type": "object",
+          "properties": {
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "EstoqueModelId": {
+              "type": "string"
+            },
+            "ProdutoModelId": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "ProdutoEstoqueItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nome": {
+          "type": "string"
+        },
+        "quantidade": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "valor": {
+          "type": "number",
+          "format": "float"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "estoque_produto": {
+          "type": "object",
+          "properties": {
+            "createdAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "updatedAt": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "EstoqueModelId": {
+              "type": "string"
+            },
+            "ProdutoModelId": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "EstoquePost": {
+      "type": "object",
+      "required": ["nome"],
+      "properties": {
+        "nome": {
+          "type": "string"
+        },
+        "descricao": {
+          "type": "string"
+        }
+      }
+    },
+    "EstoqueResposta": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "nome": {
+          "type": "string"
+        },
+        "descricao": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "EstoqueProdutoCriarLigacao": {
+      "type": "object",
+      "required": ["produtoId", "estoqueId"],
+      "properties": {
+        "produtoId": {
+          "type": "string"
+        },
+        "estoqueId": {
+          "type": "string"
+        }
+      }
+    },
+    "UsuarioModel": {
+      "type": "object",
+      "required": ["username", "password"],
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "UsuarioResposta": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}
